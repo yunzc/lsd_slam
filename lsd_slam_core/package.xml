@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>lsd_slam_core</name>
+  <version>3.0.0</version>
+  <description>
+     Large-Scale Direct Monocular SLAM
+  </description>
+  <author>Jakob Engel</author>
+  <maintainer email="changyun808@gmail.com">Yun Chang</maintainer>
+  <license>see http://vision.in.tum.de/lsdslam </license>
+  <url>http://vision.in.tum.de/lsdslam</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>sensor_msgs</depend>
+  <depend>roslib</depend>
+  <depend>rosbag</depend>
+  <depend>lsd_slam_viewer</depend>
+</package> 

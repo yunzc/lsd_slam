@@ -1,16 +1,5 @@
 cmake_minimum_required(VERSION 2.8.7)
 project(lsd_slam_core)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-set(ROS_BUILD_TYPE Release)
-
-rosbuild_init() 
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
@@ -28,14 +17,11 @@ find_package(X11 REQUIRED)
 #set(FABMAP_LIB openFABMAP )
 
 # Dynamic Reconfigure Services
-rosbuild_find_ros_package(dynamic_reconfigure)
-include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
-gencfg()
-
-# SSE flags
-rosbuild_check_for_sse()
-add_definitions("-DUSE_ROS")
-add_definitions("-DENABLE_SSE")
+find_package(catkin REQUIRED COMPONENTS roscpp dynamic_reconfigure)
+generate_dynamic_reconfigure_options(
+  cfg/LSDDebugParams.cfg
+  cfg/LSDParams.cfg
+)
 
 # Also add some useful compiler flag
 set(CMAKE_CXX_FLAGS
@@ -72,7 +58,11 @@ set(SOURCE_FILES
   ${PROJECT_SOURCE_DIR}/src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp
 )
 
+# Messages & Services
+generate_messages()
+
 include_directories(
+  ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_SOURCE_DIR}/thirdparty/Sophus
@@ -82,17 +72,16 @@ include_directories(
 
 
 # build shared library.
-rosbuild_add_library(lsdslam SHARED ${SOURCE_FILES})
+add_library(lsdslam SHARED ${SOURCE_FILES})
 target_link_libraries(lsdslam ${FABMAP_LIB} g2o_core g2o_stuff csparse cxsparse g2o_solver_csparse g2o_csparse_extension g2o_types_sim3 g2o_types_sba X11)
-rosbuild_link_boost(lsdslam thread)
-
+include_directories(${Boost_INCLUDE_DIRS})
+target_link_libraries(lsdslam ${Boost_LIBRARIES}) 
 
 # build live ros node
-rosbuild_add_executable(live_slam src/main_live_odometry.cpp)
+add_executable(live_slam src/main_live_odometry.cpp)
 target_link_libraries(live_slam lsdslam)
 
 
 # build image node
-rosbuild_add_executable(dataset_slam src/main_on_images.cpp)
+add_executable(dataset_slam src/main_on_images.cpp)
 target_link_libraries(dataset_slam lsdslam)
-
