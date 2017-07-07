@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 2.4.6)
 project(lsd_slam_viewer)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+
+set(CMAKE_BUILD_TYPE Release)
 
 ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/thirdparty/Sophus)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(OpenGL REQUIRED)
@@ -13,13 +12,28 @@ set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
 find_package(QGLViewer REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(OpenCV REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS 
   roscpp 
   std_msgs 
   dynamic_reconfigure 
   message_generation
+  rosbag
+  roslib
+  cv_bridge
+  sensor_msgs
+)
+
+include_directories(
+  ${catkin_INCLUDE_DIRS} 
+  ${QT_INCLUDES} 
+  ${EIGEN3_INCLUDE_DIR} 
+  ${QGLVIEWER_INCLUDE_DIR}
+)
+
+# SSE flags
+set(CMAKE_CXX_FLAGS
+   "${CMAKE_CXX_FLAGS} -march=native -Wall -std=c++0x"
 )
 
 # Messages & Services
@@ -37,18 +51,11 @@ generate_messages(
 
 # Generate Dynamic Reconfigure
 generate_dynamic_reconfigure_options(
-  LSDSLAMViewerParams.cfg
+  cfg/LSDSLAMViewerParams.cfg
 )
 
 catkin_package(
  CATKIN_DEPENDS message_runtime
-)
-
-include_directories(
-  ${catkin_INCLUDE_DIRS} 
-  ${QT_INCLUDES} 
-  ${EIGEN3_INCLUDE_DIR} 
-  ${QGLVIEWER_INCLUDE_DIR}
 )
 
 # SSE Sources files
@@ -74,10 +81,15 @@ add_executable(viewer src/main_viewer.cpp ${SOURCE_FILES} ${HEADER_FILES})
 
 add_dependencies(viewer ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${OpenCV_LIBS} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} GL glut GLU)
+target_link_libraries(viewer ${QGLViewer_LIBRARIES} 
+  ${QT_LIBRARIES} 
+  ${QGLVIEWER_LIBRARY} 
+  ${catkin_LIBRARIES}
+  GL glut GLU
+)
 
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(viewer ${Boost_LIBRARIES}) 
 
-add_executable(videoStitch src/main_stitchVideos.cpp)
-
+# add_executable(videoStitch src/main_stitchVideos.cpp)
+# For some reason this line causes opencv problems... 

@@ -18,4 +18,8 @@
   <depend>roslib</depend>
   <depend>rosbag</depend>
   <depend>lsd_slam_viewer</depend>
+  <depend>eigen3</depend>
+  <depend>suitesparse</depend>
+  <depend>libg2o</depend>
+  <depend>cmake_modules</depend>
 </package> 
