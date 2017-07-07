@@ -22,7 +22,6 @@ find_package(Eigen3 REQUIRED)
 find_package(X11 REQUIRED)
 include(cmake/FindEigen3.cmake)
 include(cmake/FindSuiteParse.cmake)
-include(cmake/FindG2O.cmake)
 
 message("-- CHOLMOD_INCLUDE_DIR : " ${CHOLMOD_INCLUDE_DIR})
 message("-- CSPARSE_INCLUDE_DIR : " ${CSPARSE_INCLUDE_DIR})
@@ -42,7 +41,7 @@ generate_dynamic_reconfigure_options(
 
 catkin_package(
   LIBRARIES lsdslam
-  DEPENDS Eigen SuiteSparse
+  DEPENDS EIGEN3 SuiteParse g2o
   CATKIN_DEPENDS libg2o 
 )
 
@@ -85,29 +84,25 @@ set(SOURCE_FILES
   ${PROJECT_SOURCE_DIR}/src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp
 )
 
-include_directories(
-  ${EIGEN3_INCLUDE_DIR}
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_SOURCE_DIR}/thirdparty/Sophus
-  ${CSPARSE_INCLUDE_DIR} #Has been set by SuiteParse
-  ${CHOLMOD_INCLUDE_DIR} #Has been set by SuiteParse
-)
+add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/g2o)
 
 include_directories(
   include
   ${EIGEN3_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_SOURCE_DIR}/thirdparty/Sophus
+  ${PROJECT_SOURCE_DIR}/thirdparty/g2o
   ${CSPARSE_INCLUDE_DIR} #Has been set by SuiteParse
   ${CHOLMOD_INCLUDE_DIR} #Has been set by SuiteParse
+  ${catkin_INCLUDE_DIRS}
 )
 
+link_directories(${PROJECT_SOURCE_DIR}/thirdparty/g2o)
 
 # build shared library.
 add_library(lsdslam SHARED ${SOURCE_FILES})
 target_link_libraries(lsdslam ${FABMAP_LIB} ${G2O_LIBRARIES} ${catkin_LIBRARIES} csparse cxsparse X11)
 #rosbuild_link_boost(lsdslam thread)
-
 
 # build live ros node
 add_executable(live_slam src/main_live_odometry.cpp)
@@ -121,3 +116,4 @@ target_link_libraries(dataset lsdslam ${catkin_LIBRARIES} ${G2O_LIBRARIES})
 add_dependencies(lsdslam lsd_slam_viewer_generate_messages_cpp)
 add_dependencies(live_slam lsd_slam_viewer_generate_messages_cpp)
 add_dependencies(dataset lsd_slam_viewer_generate_messages_cpp)
+
