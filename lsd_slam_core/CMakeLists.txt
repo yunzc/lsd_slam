@@ -17,7 +17,11 @@ find_package(X11 REQUIRED)
 #set(FABMAP_LIB openFABMAP )
 
 # Dynamic Reconfigure Services
-find_package(catkin REQUIRED COMPONENTS roscpp dynamic_reconfigure)
+find_package(catkin REQUIRED COMPONENTS 
+  roscpp 
+  dynamic_reconfigure
+)
+
 generate_dynamic_reconfigure_options(
   cfg/LSDDebugParams.cfg
   cfg/LSDParams.cfg
@@ -58,8 +62,6 @@ set(SOURCE_FILES
   ${PROJECT_SOURCE_DIR}/src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp
 )
 
-# Messages & Services
-generate_messages()
 
 include_directories(
   ${catkin_INCLUDE_DIRS}

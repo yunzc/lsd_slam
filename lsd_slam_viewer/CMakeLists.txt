@@ -13,13 +13,14 @@ set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
 find_package(QGLViewer REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(OpenCV REQUIRED)
 
-find_package(catkin REQUIRED COMPONENTS roscpp dynamic_reconfigure)
-generate_dynamic_reconfigure_options(
-  LSDSLAMViewerParams.cfg
+find_package(catkin REQUIRED COMPONENTS 
+  roscpp 
+  std_msgs 
+  dynamic_reconfigure 
+  message_generation
 )
-
-include_directories(${catkin_INCLUDE_DIRS} ${QT_INCLUDES} ${EIGEN3_INCLUDE_DIR} ${QGLVIEWER_INCLUDE_DIR})
 
 # Messages & Services
 # Generate messages in the 'msg' folder
@@ -32,6 +33,23 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   std_msgs
+)
+
+# Generate Dynamic Reconfigure
+generate_dynamic_reconfigure_options(
+  LSDSLAMViewerParams.cfg
+)
+
+catkin_package(
+ CATKIN_DEPENDS message_runtime
+)
+
+include_directories(
+  ${OpenCV_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS} 
+  ${QT_INCLUDES} 
+  ${EIGEN3_INCLUDE_DIR} 
+  ${QGLVIEWER_INCLUDE_DIR}
 )
 
 # SSE Sources files
@@ -55,7 +73,9 @@ include_directories(
 
 add_executable(viewer src/main_viewer.cpp ${SOURCE_FILES} ${HEADER_FILES})
 
-target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} GL glut GLU)
+add_dependencies(viewer ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OpenCV_LIBRARIES} GL glut GLU)
 
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(viewer ${Boost_LIBRARIES}) 
