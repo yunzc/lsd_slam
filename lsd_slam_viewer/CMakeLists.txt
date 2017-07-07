@@ -45,7 +45,6 @@ catkin_package(
 )
 
 include_directories(
-  ${OpenCV_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS} 
   ${QT_INCLUDES} 
   ${EIGEN3_INCLUDE_DIR} 
@@ -75,7 +74,7 @@ add_executable(viewer src/main_viewer.cpp ${SOURCE_FILES} ${HEADER_FILES})
 
 add_dependencies(viewer ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OpenCV_LIBRARIES} GL glut GLU)
+target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${OpenCV_LIBS} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} GL glut GLU)
 
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(viewer ${Boost_LIBRARIES}) 
