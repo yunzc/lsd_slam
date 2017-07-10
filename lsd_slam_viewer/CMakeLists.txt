@@ -12,6 +12,8 @@ set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
 find_package(QGLViewer REQUIRED)
 find_package(Eigen3 REQUIRED)
+include(cmake/FindEigen3.cmake)
+include(cmake/FindQGLViewer.cmake)
 
 find_package(catkin REQUIRED COMPONENTS 
   roscpp 
