@@ -1,7 +1,7 @@
-# LSD-SLAM: Large-Scale Direct Monocular SLAMQ
+# LSD-SLAM: Large-Scale Direct Monocular SLAM
 
-Package so far yet has a lot of problems. My purpose was to be able to install and run this system on Ubuntu 16.04 and ROS Kinetic. 
-I have made a lot of progress over the last days, solved most problems except for the .h or .cpp file compatibility. (In this case, the software problem is that of some initialization probel)
+Package so far still has a lot of problems. My purpose was to be able to install and run this package on Ubuntu 16.04 and ROS Kinetic. 
+I have made a lot of progress over the last days, solved most problems except for the .h or .cpp file compatibility.
 
 LSD-SLAM is a novel approach to real-time monocular SLAM. It is fully direct (i.e. does not use keypoints / features) and creates large-scale, 
 semi-dense maps in real-time on a laptop. For more information see
